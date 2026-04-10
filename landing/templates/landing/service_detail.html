@@ -1,0 +1,255 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ seo.title }}</title>
+    <meta name="description" content="{{ seo.description }}">
+    <meta name="author" content="{{ company.name }}">
+    <meta name="robots" content="{{ seo.robots }}">
+    <meta name="theme-color" content="#12172D">
+    <link rel="canonical" href="{{ seo.canonical_url }}">
+    <link rel="alternate" hreflang="es-CO" href="{{ seo.canonical_url }}">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="{{ seo.sitemap_url }}">
+    <meta property="og:title" content="{{ seo.title }}">
+    <meta property="og:description" content="{{ seo.description }}">
+    <meta property="og:type" content="{{ seo.og_type }}">
+    <meta property="og:url" content="{{ seo.og_url }}">
+    <meta property="og:site_name" content="{{ company.name }}">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:image" content="{{ seo.og_image_url }}">
+    <meta property="og:image:alt" content="{{ seo.og_image_alt }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo.title }}">
+    <meta name="twitter:description" content="{{ seo.description }}">
+    <meta name="twitter:image" content="{{ seo.og_image_url }}">
+    <script>document.documentElement.classList.add('js-ready');</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oxanium:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'landing/css/site.css' %}">
+    <script type="application/ld+json">{{ seo.schema_json|safe }}</script>
+</head>
+<body class="detail-page">
+    <div class="page-loader" id="page-loader" aria-hidden="true">
+        <div class="page-loader__mark">
+            <img src="{% static 'landing/images/logo_gamora_fondo_eliminado.png' %}" alt="" loading="eager">
+            <span>Gamora Systems</span>
+        </div>
+    </div>
+
+    <div class="cursor cursor--outer" aria-hidden="true"></div>
+    <div class="cursor cursor--inner" aria-hidden="true"></div>
+
+    <div class="ambient" aria-hidden="true">
+        <span class="ambient__orb ambient__orb--one"></span>
+        <span class="ambient__orb ambient__orb--two"></span>
+        <span class="ambient__grid"></span>
+    </div>
+
+    <header class="topbar">
+        <a class="brand" href="{% url 'landing:home' %}" aria-label="Ir al inicio de Gamora Systems">
+            <img class="brand__mark" src="{% static 'landing/images/logo_gamora_fondo_eliminado.png' %}" alt="Logo de {{ company.name }}" loading="eager">
+            <span class="brand__copy">
+                <strong>{{ company.name }}</strong>
+                <small>{{ company.tagline }}</small>
+            </span>
+        </a>
+
+        <nav class="nav" aria-label="Navegacion principal">
+            {% for item in nav_items %}
+                <a href="{% url 'landing:home' %}#{{ item.id }}">{{ item.label }}</a>
+            {% endfor %}
+        </nav>
+
+        <a class="button button--ghost" href="{% url 'landing:home' %}#contact">Solicitar diagnostico</a>
+    </header>
+
+    <main class="service-main">
+        <section class="section service-hero">
+            <div class="service-hero__copy reveal">
+                <a class="breadcrumb" href="{% url 'landing:home' %}#value">Volver a soluciones</a>
+                <p class="section-kicker">{{ service.eyebrow }}</p>
+                <h1>{{ service.detail_title }}</h1>
+                <p class="service-hero__lead">{{ service.description }}</p>
+                <p class="service-hero__support">{{ service.detail_intro }}</p>
+
+                <div class="hero__actions">
+                    <a class="button button--primary" href="{% url 'landing:home' %}#contact">Quiero esta solucion</a>
+                    <a class="button button--secondary" href="#mockup">Ver mockup</a>
+                </div>
+            </div>
+
+            <aside class="service-summary reveal">
+                <div class="service-summary__head">
+                    <div class="service-card__icon">{{ service.icon|safe }}</div>
+                    <div>
+                        <p class="section-kicker section-kicker--muted">Vista general</p>
+                        <h2>{{ service.title }}</h2>
+                    </div>
+                </div>
+
+                <div class="service-summary__metrics">
+                    {% for metric in service.desktop_metrics %}
+                        <div class="service-summary__metric">
+                            <span>{{ metric.label }}</span>
+                            <strong>{{ metric.value }}</strong>
+                        </div>
+                    {% endfor %}
+                </div>
+            </aside>
+        </section>
+
+        <section class="section service-benefits">
+            <div class="section-heading reveal">
+                <p class="section-kicker">Beneficios</p>
+                <h2>Lo que esta solucion aporta a tu operacion</h2>
+                <p>Todo el contenido de esta vista parte de la propuesta comercial y los diferenciales reales de Gamora Systems.</p>
+            </div>
+
+            <div class="benefit-grid">
+                {% for benefit in service.benefits %}
+                    <article class="benefit-card reveal">
+                        <span>{{ forloop.counter|stringformat:"02d" }}</span>
+                        <p>{{ benefit }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="section service-showcase" id="mockup">
+            <div class="section-heading reveal">
+                <p class="section-kicker">Mockup</p>
+                <h2>Asi podria verse en computador y celular</h2>
+                <p>La maqueta visual traduce la solucion a una interfaz clara, premium y alineada con la estetica de Gamora.</p>
+            </div>
+
+            <div class="showcase-layout">
+                <article class="device-mockup device-mockup--desktop reveal">
+                    <div class="device-frame device-frame--desktop">
+                        <div class="device-bar">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+                        <div class="device-screen">
+                            <div class="mockup-header">
+                                <strong>{{ service.desktop_title }}</strong>
+                                <small>{{ company.name }}</small>
+                            </div>
+
+                            <div class="mockup-grid">
+                                {% for metric in service.desktop_metrics %}
+                                    <div class="mockup-grid__item">
+                                        <span>{{ metric.label }}</span>
+                                        <strong>{{ metric.value }}</strong>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mockup-rows">
+                                {% for row in service.desktop_rows %}
+                                    <div class="mockup-row">
+                                        <span>{{ row.label }}</span>
+                                        <strong>{{ row.value }}</strong>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="device-mockup device-mockup--mobile reveal">
+                    <div class="device-frame device-frame--mobile">
+                        <div class="device-notch"></div>
+                        <div class="device-screen device-screen--mobile">
+                            <div class="mockup-header">
+                                <strong>{{ service.mobile_title }}</strong>
+                                <small>{{ company.name }}</small>
+                            </div>
+
+                            <div class="mobile-cards">
+                                {% for item in service.mobile_cards %}
+                                    <div class="mobile-card">
+                                        <span>{{ forloop.counter|stringformat:"02d" }}</span>
+                                        <strong>{{ item }}</strong>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section service-more">
+            <div class="section-heading reveal">
+                <p class="section-kicker">Explora mas</p>
+                <h2>Otras soluciones del ecosistema Gamora</h2>
+            </div>
+
+            <div class="more-services">
+                {% for item in other_services %}
+                    <a class="more-services__item reveal" href="{{ item.url }}">
+                        <span>{{ item.eyebrow }}</span>
+                        <strong>{{ item.title }}</strong>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__brand">
+            <img src="{% static 'landing/images/logo_gamora_fondo_eliminado.png' %}" alt="Logo de {{ company.name }}" loading="lazy">
+            <div>
+                <strong>{{ company.name }}</strong>
+                <p>{{ company.statement }}</p>
+            </div>
+        </div>
+
+        <nav class="footer__links" aria-label="Enlaces del pie">
+            {% for item in nav_items %}
+                <a href="{% url 'landing:home' %}#{{ item.id }}">{{ item.label }}</a>
+            {% endfor %}
+        </nav>
+
+        <p class="footer__meta">{{ company.location }} · {{ company.coverage }} · {{ current_year }}</p>
+    </footer>
+
+    <div class="whatsapp-dock">
+        <a
+            class="whatsapp-fab{% if not whatsapp.enabled %} whatsapp-fab--pending{% endif %}"
+            id="whatsapp-fab"
+            href="{% if whatsapp.enabled %}{{ whatsapp.link }}{% else %}{% url 'landing:home' %}#contact{% endif %}"
+            {% if whatsapp.enabled %}target="_blank" rel="noopener noreferrer"{% endif %}
+            aria-label="{% if whatsapp.enabled %}Abrir conversacion por WhatsApp{% else %}Ir al formulario de contacto mientras se activa WhatsApp Business{% endif %}"
+            data-track-url="{% url 'landing:track_whatsapp_click' %}"
+            data-whatsapp-target="{% if whatsapp.enabled %}{{ whatsapp.link }}{% else %}{{ whatsapp.business_url }}{% endif %}"
+            data-whatsapp-enabled="{% if whatsapp.enabled %}1{% else %}0{% endif %}"
+        >
+            <span class="whatsapp-fab__icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" focusable="false">
+                    <path d="M27.2 15.4c0 6.3-5.1 11.4-11.4 11.4-2 0-4-.5-5.8-1.6L4 27.2l2.1-5.8c-1-1.8-1.5-3.8-1.5-5.9C4.6 9.1 9.7 4 16 4s11.2 5.1 11.2 11.4z"></path>
+                    <path d="M12.5 10.6c-.2-.5-.4-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.3 3.4 1.5 3.6c.2.2 2.5 4 6.2 5.4 3 1.2 3.6 1 4.3.9.7-.1 2.1-.9 2.4-1.8.3-.8.3-1.6.2-1.8-.1-.2-.4-.3-.9-.5s-2.1-1.1-2.4-1.2-.6-.2-.8.2-.9 1.2-1.1 1.4-.4.3-.8.1c-.5-.2-1.9-.7-3.6-2.2-1.4-1.2-2.2-2.7-2.4-3.2-.2-.5 0-.7.2-.9.2-.2.4-.5.6-.7.2-.2.2-.4.3-.6s0-.4-.1-.6-.7-1.8-1-2.4z"></path>
+                </svg>
+            </span>
+            <span class="whatsapp-fab__copy">
+                <strong>WhatsApp</strong>
+                <small>{% if whatsapp.enabled %}Respuesta rapida y contacto directo{% else %}Boton listo, falta conectar el numero Business{% endif %}</small>
+            </span>
+        </a>
+
+        {% if not whatsapp.enabled %}
+            <a class="whatsapp-setup-link" href="{{ whatsapp.business_url }}" target="_blank" rel="noopener noreferrer">
+                Activar WhatsApp Business
+            </a>
+        {% endif %}
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script defer src="{% static 'landing/js/site.js' %}"></script>
+</body>
+</html>
