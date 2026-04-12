@@ -451,18 +451,18 @@ STATS = [
 
 TESTIMONIALS = [
 	{
-		'name': 'Carlos Mendoza',
+		'name': 'Cuir Tapiceria',
 		'role': 'Propietario',
-		'company': 'Tienda Don Carlos, Medellin',
+		'company': 'Tapiceria cuir, La Estrella',
 		'text': 'En menos de una semana ya teniamos el sistema funcionando. Antes perdiamos tiempo y ventas por no tener un registro claro. Ahora todo esta bajo control y el equipo lo usa sin ningun problema.',
-		'initials': 'CM',
+		'initials': 'CT',
 	},
 	{
-		'name': 'Laura Jimenez',
-		'role': 'Gerente General',
-		'company': 'Distribuidora Jimenez, Medellin',
+		'name': 'Comercializadora JT',
+		'role': 'Gerente ',
+		'company': 'Comercializadora JT, Medellin',
 		'text': 'Gamora nos ayudo a digitalizar el inventario y las ventas. El equipo nos explico cada paso y el soporte ha sido excelente desde el primer dia. Vale cada peso invertido.',
-		'initials': 'LJ',
+		'initials': 'JT',
 	},
 	{
 		'name': 'Andres Restrepo',
