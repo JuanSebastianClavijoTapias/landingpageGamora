@@ -1,7 +1,27 @@
 document.documentElement.classList.add('js-ready');
 
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lowEndDevice = Boolean(window.__lowEndDevice);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || lowEndDevice;
 const loader = document.getElementById('page-loader');
+
+const loadGSAP = () => {
+    if (reduceMotion) {
+        return Promise.resolve(null);
+    }
+
+    if (window.gsap) {
+        return Promise.resolve(window.gsap);
+    }
+
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js';
+        script.async = true;
+        script.onload = () => resolve(window.gsap || null);
+        script.onerror = () => resolve(null);
+        document.head.appendChild(script);
+    });
+};
 
 const revealHeroFallback = () => {
     document.querySelectorAll('.hero-animate, .hero-stage .hero-panel').forEach((item) => {
@@ -35,10 +55,14 @@ const runHeroIntro = () => {
 };
 
 window.addEventListener('load', () => {
-    window.setTimeout(() => {
+    const finishIntro = () => {
         loader?.classList.add('is-hidden');
         runHeroIntro();
-    }, 180);
+    };
+
+    loadGSAP().finally(() => {
+        window.setTimeout(finishIntro, lowEndDevice ? 0 : 180);
+    });
 });
 
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -58,24 +82,32 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     });
 });
 
-const revealObserver = new IntersectionObserver(
-    (entries, observer) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-                return;
-            }
+const revealItems = document.querySelectorAll('.reveal');
 
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-        });
-    },
-    { threshold: 0.18, rootMargin: '0px 0px -8% 0px' },
-);
+if (lowEndDevice || typeof window.IntersectionObserver !== 'function') {
+    revealItems.forEach((item) => {
+        item.classList.add('is-visible');
+    });
+} else {
+    const revealObserver = new IntersectionObserver(
+        (entries, observer) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
 
-document.querySelectorAll('.reveal').forEach((item, index) => {
-    item.style.setProperty('--delay', `${(index % 6) * 80}ms`);
-    revealObserver.observe(item);
-});
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            });
+        },
+        { threshold: 0.18, rootMargin: '0px 0px -8% 0px' },
+    );
+
+    revealItems.forEach((item, index) => {
+        item.style.setProperty('--delay', `${(index % 6) * 80}ms`);
+        revealObserver.observe(item);
+    });
+}
 
 const numberFormat = new Intl.NumberFormat('es-CO');
 const animateCounter = (element) => {
@@ -105,23 +137,34 @@ const animateCounter = (element) => {
     window.requestAnimationFrame(tick);
 };
 
-const counterObserver = new IntersectionObserver(
-    (entries, observer) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-                return;
-            }
+const counters = document.querySelectorAll('.counter');
 
-            animateCounter(entry.target);
-            observer.unobserve(entry.target);
-        });
-    },
-    { threshold: 0.45 },
-);
+if (lowEndDevice || typeof window.IntersectionObserver !== 'function') {
+    counters.forEach((counter) => {
+        const target = Number(counter.dataset.target || 0);
+        const prefix = counter.dataset.prefix || '';
+        const suffix = counter.dataset.suffix || '';
+        counter.textContent = `${prefix}${numberFormat.format(target)}${suffix}`;
+    });
+} else {
+    const counterObserver = new IntersectionObserver(
+        (entries, observer) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
 
-document.querySelectorAll('.counter').forEach((counter) => {
-    counterObserver.observe(counter);
-});
+                animateCounter(entry.target);
+                observer.unobserve(entry.target);
+            });
+        },
+        { threshold: 0.45 },
+    );
+
+    counters.forEach((counter) => {
+        counterObserver.observe(counter);
+    });
+}
 
 const whatsappFab = document.getElementById('whatsapp-fab');
 if (whatsappFab) {
@@ -206,5 +249,60 @@ if (cursorOuter && cursorInner && window.matchMedia('(pointer: fine)').matches) 
     document.querySelectorAll('a, button, input, textarea, .service-card, .bento-card, .stat-card, .story-row').forEach((item) => {
         item.addEventListener('pointerenter', () => document.body.classList.add('cursor-hover'));
         item.addEventListener('pointerleave', () => document.body.classList.remove('cursor-hover'));
+    });
+}
+
+// Menu hamburguesa
+const navToggle = document.getElementById('nav-toggle');
+const mobileNav = document.getElementById('mobile-nav');
+const mobileNavClose = document.getElementById('mobile-nav-close');
+
+if (navToggle && mobileNav) {
+    const closeMenu = () => {
+        mobileNav.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+        mobileNav.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    };
+
+    const openMenu = () => {
+        mobileNav.classList.add('is-open');
+        navToggle.setAttribute('aria-expanded', 'true');
+        mobileNav.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    };
+
+    navToggle.addEventListener('click', () => {
+        if (mobileNav.classList.contains('is-open')) {
+            closeMenu();
+            return;
+        }
+
+        openMenu();
+    });
+
+    mobileNavClose?.addEventListener('click', closeMenu);
+
+    mobileNav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeMenu);
+    });
+
+    mobileNav.addEventListener('click', (event) => {
+        if (event.target === mobileNav) {
+            closeMenu();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && mobileNav.classList.contains('is-open')) {
+            closeMenu();
+            navToggle.focus();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 860 && mobileNav.classList.contains('is-open')) {
+            closeMenu();
+        }
     });
 }

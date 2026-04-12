@@ -24,11 +24,33 @@
     <meta name="twitter:title" content="{{ seo.title }}">
     <meta name="twitter:description" content="{{ seo.description }}">
     <meta name="twitter:image" content="{{ seo.og_image_url }}">
-    <script>document.documentElement.classList.add('js-ready');</script>
+    <script>
+        (function () {
+            const root = document.documentElement;
+            root.classList.add('js-ready');
+
+            try {
+                const lowMemory = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
+                const lowCpu = typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 4;
+                const saveData = Boolean(navigator.connection && navigator.connection.saveData);
+                const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
+                if (saveData || (coarsePointer && (lowMemory || lowCpu))) {
+                    root.classList.add('low-end-device');
+                    window.__lowEndDevice = true;
+                    return;
+                }
+            } catch (error) {
+                // Ignore capability detection failures and continue with the default experience.
+            }
+
+            window.__lowEndDevice = false;
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oxanium:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'landing/css/site.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/css/site.css' %}?v=20260411f">
     <script type="application/ld+json">{{ seo.schema_json|safe }}</script>
 </head>
 <body>
@@ -64,19 +86,40 @@
         </nav>
 
         <a class="button button--ghost" href="#contact">Solicitar diagnostico</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </header>
+
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+        <nav class="mobile-nav__links">
+            <div class="mobile-nav__head">
+                <strong>Menu</strong>
+                <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Cerrar menu" type="button">
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            {% for item in nav_items %}
+                <a href="#{{ item.id }}" class="mobile-nav__link">{{ item.label }}</a>
+            {% endfor %}
+            <a class="button button--primary mobile-nav__cta" href="#contact">Solicitar diagnostico</a>
+        </nav>
+    </div>
 
     <main>
         <!-- Hero -->
         <section class="section hero" id="hero">
             <div class="hero__copy">
-                <p class="hero__eyebrow hero-animate">IA + SaaS + automatizacion + desarrollo ultra rapido</p>
-                <h1 class="hero-animate">Entrega en dias.<br>Tecnologia empresarial.<br>Precio PYME.</h1>
+                <p class="hero__eyebrow hero-animate">Software, automatizacion e inteligencia artificial para que tu empresa crezca mas rapido</p>
+                <h1 class="hero-animate">Entrega en dias.<br>Tecnologia clara.<br>Resultados reales.</h1>
                 <p class="hero__lead hero-animate">{{ company.description }}</p>
 
                 <div class="hero__actions hero-animate">
-                    <a class="button button--primary" href="#contact">Quiero crecer con Gamora</a>
-                    <a class="button button--secondary" href="#value">Explorar soluciones</a>
+                    <a class="button button--primary" href="#contact">Quiero una propuesta</a>
+                    <a class="button button--secondary" href="#servicios">Ver servicios</a>
                 </div>
 
                 <ul class="hero__proof hero-animate" aria-label="Promesas de entrega">
@@ -94,7 +137,7 @@
                     <div class="hero-panel__halo"></div>
                     <img class="hero-panel__logo" src="{% static 'landing/images/logo_gamora_fondo_eliminado.png' %}" alt="Logo Gamora Systems" loading="eager">
                     <div class="hero-panel__body">
-                        <p class="hero-panel__kicker">Brand statement</p>
+                        <p class="hero-panel__kicker">Nuestra promesa</p>
                         <h2>{{ company.statement }}</h2>
                         <p>{{ company.subtagline }}</p>
                     </div>
@@ -117,24 +160,24 @@
 
                 <article class="hero-panel hero-panel--velocity hero-animate" data-depth="28">
                     <p class="hero-panel__kicker">Promesa oficial</p>
-                    <h2>Entrega ultra rapida potenciada por IA</h2>
-                    <p>Gamora estandariza tiempos concretos para POS, web y automatizacion y convierte la velocidad en ventaja competitiva.</p>
+                    <h2>Entrega ultra rapida potenciada por inteligencia artificial</h2>
+                    <p>Gamora define tiempos concretos para cada solucion y convierte la velocidad en una ventaja real para tu negocio.</p>
                 </article>
 
                 <article class="hero-panel hero-panel--roi hero-animate" data-depth="18">
-                    <p class="hero-panel__kicker">ROI medible</p>
+                    <p class="hero-panel__kicker">Recuperas lo que inviertes</p>
                     <strong class="hero-panel__metric">&lt; 60 dias</strong>
-                    <p>Tu inversion en Gamora se paga sola en menos de 60 dias, segun el mensaje de cierre comercial de la marca.</p>
+                    <p>Tu inversion en Gamora se paga sola en menos de 60 dias.</p>
                 </article>
             </div>
         </section>
 
-        <!-- Value -->
-        <section class="section" id="value">
+        <!-- Servicios -->
+        <section class="section" id="servicios">
             <div class="section-heading reveal">
-                <p class="section-kicker">Propuesta de valor</p>
-                <h2>Un ecosistema digital completo bajo un mismo techo</h2>
-                <p>{{ company.name }} ofrece un portafolio conectado para empresas que quieren crecer, competir como grandes y operar con IA desde el centro del negocio.</p>
+                <p class="section-kicker">Que ofrecemos</p>
+                <h2>Todo lo que tu empresa necesita digitalmente, en un solo lugar</h2>
+                <p>{{ company.name }} ofrece todo lo que tu empresa necesita en el mundo digital, en un solo lugar y con acompanamiento real.</p>
             </div>
 
             <div class="service-grid">
@@ -146,64 +189,19 @@
                         <p>{{ service.description }}</p>
                         <div class="service-card__prompt">
                             <span>Ingresa a cada uno para ver sus beneficios</span>
-                            <strong>Ver mockup</strong>
+                            <strong>Ver pantalla de ejemplo</strong>
                         </div>
                     </a>
                 {% endfor %}
             </div>
         </section>
 
-        <section class="section audience" id="audience">
+        <!-- Propuesta de valor -->
+        <section class="section" id="propuesta">
             <div class="section-heading reveal">
-                <p class="section-kicker">A quien ayudamos</p>
-                <h2>Medellin, Colombia y equipos remotos con ambicion de crecer</h2>
-                <p>Gamora Systems enfoca su propuesta en empresas que necesitan digitalizarse, crecer mas rapido y operar con tecnologia de nivel empresarial sin pagar precios corporativos.</p>
-            </div>
-
-            <div class="audience-grid">
-                {% for segment in audience_segments %}
-                    <article class="audience-card reveal">
-                        <span>{{ forloop.counter|stringformat:"02d" }}</span>
-                        <h3>{{ segment.title }}</h3>
-                        <p>{{ segment.description }}</p>
-                    </article>
-                {% endfor %}
-            </div>
-        </section>
-
-        <!-- Story -->
-        <section class="section story" id="story">
-            <div class="section-heading reveal">
-                <p class="section-kicker">Problema -> solucion</p>
-                <h2>De operar lento y fragmentado a crecer con sistemas que trabajan por ti</h2>
-                <p>La narrativa de Gamora es clara: menos retrasos, menos proveedores, menos friccion y mas velocidad, automatizacion y retorno.</p>
-            </div>
-
-            <div class="story-list">
-                {% for step in story_steps %}
-                    <article class="story-row reveal">
-                        <div class="story-block story-block--problem">
-                            <span>Problema</span>
-                            <h3>{{ step.problem }}</h3>
-                            <p>{{ step.impact }}</p>
-                        </div>
-                        <div class="story-row__beam" aria-hidden="true"><span></span></div>
-                        <div class="story-block story-block--solution">
-                            <span>Solucion</span>
-                            <h3>{{ step.solution }}</h3>
-                            <p>{{ step.outcome }}</p>
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        </section>
-
-        <!-- Differentiators -->
-        <section class="section" id="advantages">
-            <div class="section-heading reveal">
-                <p class="section-kicker">Diferenciadores</p>
-                <h2>Velocidad real, IA integrada y acompanamiento continuo</h2>
-                <p>Estos son los argumentos clave con los que Gamora compite frente a agencias lentas, costosas y fragmentadas.</p>
+                <p class="section-kicker">Por que elegirnos</p>
+                <h2>Velocidad real, tecnologia inteligente y acompanamiento continuo</h2>
+                <p>Estas son las razones por las que Gamora es diferente a las agencias lentas, caras y desconectadas.</p>
             </div>
 
             <div class="bento-grid">
@@ -217,36 +215,33 @@
             </div>
         </section>
 
-        <!-- Proof -->
-        <section class="section proof" id="proof">
+        <!-- Testimonios -->
+        <section class="section" id="testimonios">
             <div class="section-heading reveal">
-                <p class="section-kicker">Resultados y prueba social</p>
-                <h2>Una promesa comercial respaldada por velocidad, alcance y casos reales en marcha</h2>
-                <p>Gamora ya trabaja con empresas satisfechas en Medellin y comunica tiempos, retorno y cobertura como activos de conversion.</p>
+                <p class="section-kicker">Lo que dicen nuestros clientes</p>
+                <h2>Empresas reales que ya estan creciendo con Gamora</h2>
+                <p>Estas son las experiencias de quienes confiaron en nosotros para dar el salto digital.</p>
             </div>
 
-            <div class="stats-grid">
-                {% for stat in stats %}
-                    <article class="stat-card reveal">
-                        <strong class="counter" data-target="{{ stat.value }}" data-prefix="{{ stat.prefix }}" data-suffix="{{ stat.suffix }}">0</strong>
-                        <h3>{{ stat.label }}</h3>
-                        <p>{{ stat.description }}</p>
+            <div class="testimonials-grid">
+                {% for t in testimonials %}
+                    <article class="testimonial-card reveal">
+                        <span class="testimonial-card__quote" aria-hidden="true">&ldquo;</span>
+                        <div class="testimonial-card__top">
+                            <span class="testimonial-card__badge">Cliente verificado</span>
+                            <p class="testimonial-card__stars" aria-label="5 estrellas">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                        </div>
+                        <p class="testimonial-card__text">{{ t.text }}</p>
+                        <div class="testimonial-card__author">
+                            <span class="testimonial-card__avatar">{{ t.initials }}</span>
+                            <div class="testimonial-card__meta">
+                                <strong>{{ t.name }}</strong>
+                                <span>{{ t.role }}</span>
+                                <small>{{ t.company }}</small>
+                            </div>
+                        </div>
                     </article>
                 {% endfor %}
-            </div>
-
-            <div class="proof-band reveal">
-                <div class="proof-band__copy">
-                    <p class="section-kicker">Cobertura</p>
-                    <h3>{{ company.location }} con alcance remoto para Colombia y el mundo</h3>
-                    <p>{{ company.coverage }} No eres un cliente mas: eres un aliado al que Gamora quiere ayudar a crecer.</p>
-                </div>
-                <div class="proof-band__chips" aria-label="Beneficios de acompanamiento">
-                    <span>Soporte continuo</span>
-                    <span>Capacitacion real</span>
-                    <span>Mantenimiento proactivo</span>
-                    <span>Un solo proveedor</span>
-                </div>
             </div>
         </section>
 
@@ -254,7 +249,7 @@
         <section class="section cta" id="contact">
             <div class="cta-layout">
                 <div class="cta-copy reveal">
-                    <p class="section-kicker">CTA final</p>
+                    <p class="section-kicker">Empieza hoy</p>
                     <h2>Si tu empresa quiere crecer, no esperes semanas o meses para empezar.</h2>
                     <p>Gamora Systems entrega en dias, integra IA en cada solucion y acompana a tu equipo despues del lanzamiento. Este es el momento para convertir tecnologia en resultado.</p>
                     <div class="cta-points">
@@ -309,7 +304,7 @@
                         </div>
 
                         <button class="button button--primary button--full" type="submit">Quiero mi diagnostico tecnologico</button>
-                        <p class="lead-form__note">Sede en {{ company.location }}. Atencion para PYMES colombianas, empresas latinoamericanas e internacionales.</p>
+                        <p class="lead-form__note">Sede en {{ company.location }}. Atendemos empresas colombianas, latinoamericanas e internacionales.</p>
                     </form>
                 </div>
             </div>
@@ -364,7 +359,6 @@
         {% endif %}
     </div>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script defer src="{% static 'landing/js/site.js' %}"></script>
+    <script defer src="{% static 'landing/js/site.js' %}?v=20260411f"></script>
 </body>
 </html>
