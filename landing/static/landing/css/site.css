@@ -830,17 +830,49 @@ textarea {
 }
 
 .form-success {
-    margin-bottom: 1rem;
-    padding: 1rem 1.1rem;
-    border: 1px solid rgba(0, 251, 251, 0.2);
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(150%);
+    max-width: 500px;
+    margin: 0;
+    padding: 1.5rem 1.5rem;
+    border: 1px solid rgba(0, 251, 251, 0.3);
     border-radius: 20px;
-    background: rgba(0, 251, 251, 0.08);
+    background: rgba(2, 13, 38, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 251, 251, 0.2);
+    z-index: 1000;
+    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.form-success.is-hidden {
+    animation: slideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slideDown {
+    to {
+        transform: translateX(-50%) translateY(150%);
+    }
 }
 
 .form-success strong {
     display: block;
     margin-bottom: 0.25rem;
     color: var(--accent);
+    font-size: 1.1rem;
+}
+
+.form-success p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
 }
 
 .lead-form {
@@ -896,6 +928,22 @@ textarea {
     margin: 0;
     padding: 0;
     list-style: none;
+    color: #ffbdbd;
+    font-size: 0.88rem;
+}
+
+.field-error {
+    border-color: #ffbdbd !important;
+    background: rgba(255, 189, 189, 0.05) !important;
+}
+
+.field-error:focus {
+    border-color: #ffbdbd !important;
+    box-shadow: 0 0 0 4px rgba(255, 189, 189, 0.1) !important;
+}
+
+.field-error-message {
+    margin-top: 0.35rem;
     color: #ffbdbd;
     font-size: 0.88rem;
 }

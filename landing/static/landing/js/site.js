@@ -4,6 +4,11 @@ const lowEndDevice = Boolean(window.__lowEndDevice);
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || lowEndDevice;
 const loader = document.getElementById('page-loader');
 
+console.log('✓ Script cargado');
+console.log('Loader encontrado:', !!loader);
+console.log('Reduce motion:', reduceMotion);
+console.log('Low end device:', lowEndDevice);
+
 const loadGSAP = () => {
     if (reduceMotion) {
         return Promise.resolve(null);
@@ -54,8 +59,10 @@ const runHeroIntro = () => {
         );
 };
 
-window.addEventListener('load', () => {
+const initializePageLoader = () => {
+    console.log('✓ initializePageLoader ejecutándose');
     const finishIntro = () => {
+        console.log('✓ Ocultando loader...');
         loader?.classList.add('is-hidden');
         runHeroIntro();
     };
@@ -63,7 +70,28 @@ window.addEventListener('load', () => {
     loadGSAP().finally(() => {
         window.setTimeout(finishIntro, lowEndDevice ? 0 : 180);
     });
-});
+};
+
+// Si la página ya está cargada o se está cargando, ejecutar inmediatamente
+console.log('Document ready state:', document.readyState);
+if (document.readyState === 'loading') {
+    console.log('✓ Esperando evento load...');
+    window.addEventListener('load', initializePageLoader);
+} else {
+    // La página ya está cargada
+    console.log('✓ Página ya cargada, ejecutando initializePageLoader');
+    initializePageLoader();
+}
+
+// Fallback: asegurar que el loader se oculte después de 5 segundos en cualquier caso
+window.setTimeout(() => {
+    console.log('⚠ Fallback check - Loader hidden?', loader?.classList.contains('is-hidden'));
+    if (loader && !loader.classList.contains('is-hidden')) {
+        console.log('✓ Fallback: Ocultando loader');
+        loader.classList.add('is-hidden');
+        runHeroIntro();
+    }
+}, 5000);
 
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', (event) => {
@@ -304,5 +332,89 @@ if (navToggle && mobileNav) {
         if (window.innerWidth > 860 && mobileNav.classList.contains('is-open')) {
             closeMenu();
         }
+    });
+}
+
+// Envío del formulario con AJAX
+const leadForm = document.getElementById('lead-form');
+const formSuccess = document.getElementById('form-success');
+
+if (leadForm) {
+    leadForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        // Obtener datos del formulario
+        const formData = new FormData(leadForm);
+        const submitButton = leadForm.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+
+        try {
+            // Mostrar estado de envío
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...';
+
+            // Enviar formulario
+            const response = await fetch(leadForm.action, {
+                method: 'POST',
+                body: formData,
+            });
+
+            console.log('Respuesta status:', response.status);
+            console.log('Respuesta ok:', response.ok);
+
+            const data = await response.json();
+            console.log('Datos JSON:', data);
+
+            if (response.ok && data.success) {
+                // Éxito: mostrar mensaje y limpiar formulario
+                formSuccess.classList.remove('is-hidden');
+                leadForm.reset();
+
+                // Ocultar el mensaje después de 5 segundos
+                setTimeout(() => {
+                    formSuccess.classList.add('is-hidden');
+                }, 5000);
+            } else {
+                // Error: mostrar errores del formulario
+                const errors = data.errors || {};
+                for (const [field, fieldErrors] of Object.entries(errors)) {
+                    const fieldElement = leadForm.querySelector(`[name="${field}"]`);
+                    if (fieldElement) {
+                        fieldElement.classList.add('field-error');
+                        fieldElement.setAttribute('aria-invalid', 'true');
+
+                        // Crear elemento de error si no existe
+                        let errorEl = fieldElement.nextElementSibling;
+                        if (!errorEl || !errorEl.classList.contains('field-error-message')) {
+                            errorEl = document.createElement('div');
+                            errorEl.className = 'field-error-message';
+                            fieldElement.parentNode.insertBefore(errorEl, fieldElement.nextSibling);
+                        }
+                        errorEl.textContent = fieldErrors[0] || 'Error desconocido';
+                    }
+                }
+
+                console.error('Errores del formulario:', errors);
+            }
+        } catch (error) {
+            console.error('Error al enviar el formulario:', error);
+            alert('Ocurrió un error al enviar el formulario. Por favor intenta de nuevo.');
+        } finally {
+            // Restaurar el botón
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+        }
+    });
+
+    // Limpiar errores cuando el usuario modifique el campo
+    leadForm.querySelectorAll('input, textarea').forEach((field) => {
+        field.addEventListener('input', () => {
+            field.classList.remove('field-error');
+            field.setAttribute('aria-invalid', 'false');
+            const errorEl = field.parentNode.querySelector('.field-error-message');
+            if (errorEl) {
+                errorEl.remove();
+            }
+        });
     });
 }
