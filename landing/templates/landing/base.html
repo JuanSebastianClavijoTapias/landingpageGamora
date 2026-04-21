@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ seo.title }}</title>
-    <meta name="description" content="{{ seo.description }}">
+    <meta name="description" content="Gamora Systems desarrolla software, automatizaciones e inteligencia artificial para empresas en Medellín. Entrega en días, precio PYME e IA integrada en cada solución.">
     <meta name="author" content="{{ company.name }}">
     <meta name="robots" content="{{ seo.robots }}">
     <meta name="theme-color" content="#12172D">
@@ -56,21 +56,22 @@
         <script type="application/ld+json">{{ seo.schema_json|safe }}</script>
     {% endif %}
         <script type="application/ld+json">
-                {
-                    "@context": "https://schema.org",
-                    "@type": "LocalBusiness",
-                    "name": "Gamora Systems",
-                    "url": "https://gamorasystems.dev",
-                    "email": "contacto@gamorasystems.com",
-                    "description": "Software, automatización e inteligencia artificial para empresas en Medellín, Colombia.",
-                    "address": {
-                        "@type": "PostalAddress",
-                        "addressLocality": "Medellín",
-                        "addressRegion": "Antioquia",
-                        "addressCountry": "CO"
-                    },
-                    "sameAs": []
-                }
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Gamora Systems",
+            "url": "https://gamorasystems.dev",
+            "logo": "https://gamorasystems.dev/static/landing/images/logo_gamora_fondo_eliminado.png",
+            "email": "contacto@gamorasystems.com",
+            "description": "Software, automatizaciones e inteligencia artificial para empresas en Medellín, Colombia.",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Medellín",
+                "addressRegion": "Antioquia",
+                "addressCountry": "CO"
+            },
+            "sameAs": []
+        }
         </script>
 </head>
 <body class="{% block body_class %}{% endblock %}">
