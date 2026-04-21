@@ -1824,6 +1824,10 @@ body.cursor-hover .cursor--outer {
         padding: 0.8rem 1rem;
     }
 
+    .topbar__socials {
+        display: none;
+    }
+
     .nav {
         display: none;
     }
