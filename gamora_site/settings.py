@@ -1,10 +1,23 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-oci07!9270a0jaeyh1m=fycy)+1tavbv5)jba9847zx*0m7qb!'
 DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+default_allowed_hosts = [
+    '127.0.0.1',
+    'localhost',
+    'gamorasystems.dev',
+    'www.gamorasystems.dev',
+]
+
+configured_allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '')
+if configured_allowed_hosts:
+    ALLOWED_HOSTS = [host.strip() for host in configured_allowed_hosts.split(',') if host.strip()]
+else:
+    ALLOWED_HOSTS = default_allowed_hosts
 
 INSTALLED_APPS = [
     'django.contrib.admin',
