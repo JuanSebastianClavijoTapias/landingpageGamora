@@ -3,7 +3,7 @@ import os
 from urllib.parse import quote
 from xml.sax.saxutils import escape
 
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.templatetags.static import static
 from django.urls import reverse
@@ -11,6 +11,18 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from .content import (
+	ABOUT_STORY,
+	BLOG_POSTS,
+	CLIENT_LOGOS,
+	FOUNDERS,
+	NAV_ITEMS,
+	ROI_EXAMPLE,
+	ROI_SIGNALS,
+	ROI_STEPS,
+	SERVICE_STACKS,
+	SOCIAL_LINKS,
+)
 from .forms import LeadForm
 from .models import InteractionEvent
 
@@ -351,6 +363,7 @@ SERVICES = [
 ]
 
 SERVICE_MAP = {service['slug']: service for service in SERVICES}
+BLOG_POST_MAP = {post['slug']: post for post in BLOG_POSTS}
 
 DIFFERENTIATORS = [
 	{
@@ -493,13 +506,6 @@ CTA_POINTS = [
 	'Un solo proveedor para todo lo digital de tu empresa.',
 ]
 
-NAV_ITEMS = [
-	{'id': 'servicios', 'label': 'Servicios'},
-	{'id': 'propuesta', 'label': 'Por que elegirnos'},
-	{'id': 'testimonios', 'label': 'Testimonios'},
-	{'id': 'contact', 'label': 'Contactanos'},
-]
-
 WHATSAPP_MESSAGE = 'Hola, quiero conocer una propuesta de Gamora Systems para mi empresa.'
 WHATSAPP_BUSINESS_URL = 'https://www.whatsapp.com/business/'
 SITE_URL = os.getenv('GAMORA_SITE_URL', '').rstrip('/')
@@ -546,6 +552,7 @@ def build_home_schema(request):
 				'name': COMPANY['name'],
 				'url': home_url,
 				'logo': logo_url,
+				'sameAs': [social['url'] for social in SOCIAL_LINKS],
 				'description': BASE_SEO['description'],
 				'address': {
 					'@type': 'PostalAddress',
@@ -652,6 +659,146 @@ def build_service_seo(request, service):
 	}
 
 
+def build_standard_seo(request, title, description, path, schema_json, og_type='website'):
+	page_url = build_absolute_url(request, path)
+	logo_url = build_absolute_static_url(request, 'landing/images/logo_gamora_fondo_eliminado.png')
+	return {
+		'title': title,
+		'description': description,
+		'canonical_url': page_url,
+		'og_url': page_url,
+		'og_image_url': logo_url,
+		'og_image_alt': title,
+		'og_type': og_type,
+		'robots': 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
+		'sitemap_url': build_absolute_url(request, reverse('landing:sitemap_xml')),
+		'schema_json': schema_json,
+	}
+
+
+def build_page_schema(request, path, title, description, page_type='WebPage'):
+	page_url = build_absolute_url(request, path)
+	home_url = build_absolute_url(request, reverse('landing:home'))
+	schema = {
+		'@context': 'https://schema.org',
+		'@graph': [
+			{
+				'@type': page_type,
+				'url': page_url,
+				'name': title,
+				'description': description,
+				'isPartOf': {
+					'@type': 'WebSite',
+					'url': home_url,
+					'name': COMPANY['name'],
+				},
+			},
+		],
+	}
+	return json.dumps(schema)
+
+
+def build_blog_index_schema(request):
+	blog_url = build_absolute_url(request, reverse('landing:blog'))
+	schema = {
+		'@context': 'https://schema.org',
+		'@graph': [
+			{
+				'@type': 'Blog',
+				'url': blog_url,
+				'name': f'Blog de {COMPANY["name"]}',
+				'description': 'Casos de exito y articulos tecnicos sobre software, automatizacion, IA y conversion digital.',
+				'blogPost': [
+					{
+						'@type': 'BlogPosting',
+						'headline': post['title'],
+						'url': build_absolute_url(
+							request,
+							reverse('landing:blog_detail', kwargs={'slug': post['slug']}),
+						),
+						'datePublished': post['published_iso'],
+						'description': post['excerpt'],
+					}
+					for post in BLOG_POSTS
+				],
+			},
+		],
+	}
+	return json.dumps(schema)
+
+
+def build_blog_post_schema(request, post):
+	post_url = build_absolute_url(
+		request,
+		reverse('landing:blog_detail', kwargs={'slug': post['slug']}),
+	)
+	schema = {
+		'@context': 'https://schema.org',
+		'@type': 'BlogPosting',
+		'headline': post['title'],
+		'description': post['excerpt'],
+		'url': post_url,
+		'datePublished': post['published_iso'],
+		'author': {
+			'@type': 'Organization',
+			'name': COMPANY['name'],
+		},
+		'publisher': {
+			'@type': 'Organization',
+			'name': COMPANY['name'],
+		},
+	}
+	return json.dumps(schema)
+
+
+def build_about_seo(request):
+	title = f'Sobre nosotros | {COMPANY["name"]}'
+	description = 'Historia, equipo fundador, metodologia ROI y stack de trabajo de Gamora Systems.'
+	return build_standard_seo(
+		request,
+		title,
+		description,
+		reverse('landing:about'),
+		build_page_schema(request, reverse('landing:about'), title, description, 'AboutPage'),
+	)
+
+
+def build_privacidad_seo(request):
+	title = 'Política de Privacidad | Gamora Systems'
+	description = 'Política de Tratamiento de Datos Personales de Gamora Systems conforme a la Ley 1581 de 2012 de Colombia.'
+	return build_standard_seo(
+		request,
+		title,
+		description,
+		reverse('landing:privacidad'),
+		build_page_schema(request, reverse('landing:privacidad'), title, description),
+	)
+
+
+def build_blog_seo(request):
+	title = f'Blog | {COMPANY["name"]}'
+	description = 'Casos de exito y articulos tecnicos sobre automatizacion, software, IA y crecimiento digital.'
+	return build_standard_seo(
+		request,
+		title,
+		description,
+		reverse('landing:blog'),
+		build_blog_index_schema(request),
+	)
+
+
+def build_blog_post_seo(request, post):
+	title = f'{post["title"]} | {COMPANY["name"]}'
+	return build_standard_seo(
+		request,
+		title,
+		post['excerpt'],
+		reverse('landing:blog_detail', kwargs={'slug': post['slug']}),
+		build_blog_post_schema(request, post),
+		og_type='article',
+	)
+
+
 def build_whatsapp_link():
 	whatsapp_number = os.getenv('GAMORA_WHATSAPP_NUMBER', '').strip()
 	if not whatsapp_number:
@@ -670,19 +817,47 @@ def build_whatsapp_context():
 	}
 
 
+def build_section_href(request, section_id):
+	if request.resolver_match and request.resolver_match.url_name == 'home':
+		return f'#{section_id}'
+	return f"{reverse('landing:home')}#{section_id}"
+
+
+def build_nav_items(request):
+	current_name = request.resolver_match.url_name if request.resolver_match else ''
+	items = []
+	for item in NAV_ITEMS:
+		if 'url_name' in item:
+			href = reverse(f"landing:{item['url_name']}")
+			active = current_name == item['url_name']
+		else:
+			href = build_section_href(request, item['section'])
+			active = False
+		items.append({'label': item['label'], 'href': href, 'active': active})
+	return items
+
+
 def build_base_context(request):
+	current_name = request.resolver_match.url_name if request.resolver_match else ''
 	return {
 		'company': COMPANY,
-		'nav_items': NAV_ITEMS,
+		'nav_items': build_nav_items(request),
+		'social_links': SOCIAL_LINKS,
+		'brand_href': '#hero' if current_name == 'home' else reverse('landing:home'),
+		'contact_href': build_section_href(request, 'contact'),
+		'services_href': build_section_href(request, 'servicios'),
 		'current_year': timezone.now().year,
 		'whatsapp': build_whatsapp_context(),
 	}
 
 
 def serialize_service(service):
+	stack = SERVICE_STACKS[service['slug']]
 	return {
 		**service,
 		'icon': SERVICE_ICONS[service['icon_key']],
+		'stack': stack['items'],
+		'stack_summary': stack['summary'],
 		'url': reverse('landing:service_detail', kwargs={'slug': service['slug']}),
 	}
 
@@ -698,6 +873,35 @@ def get_service_or_404(slug):
 	return serialize_service(service)
 
 
+def serialize_blog_post(post):
+	return {
+		**post,
+		'url': reverse('landing:blog_detail', kwargs={'slug': post['slug']}),
+	}
+
+
+def get_blog_posts():
+	return [serialize_blog_post(post) for post in BLOG_POSTS]
+
+
+def get_blog_post_or_404(slug):
+	post = BLOG_POST_MAP.get(slug)
+	if post is None:
+		raise Http404('Post not found.')
+	return serialize_blog_post(post)
+
+
+def is_async_form_request(request):
+	return request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+
+def serialize_form_errors(form):
+	serialized_errors = {}
+	for field_name, error_items in form.errors.get_json_data().items():
+		serialized_errors[field_name] = [item['message'] for item in error_items]
+	return serialized_errors
+
+
 def home(request):
 	submitted = request.GET.get('submitted') == '1'
 
@@ -705,7 +909,22 @@ def home(request):
 		form = LeadForm(request.POST)
 		if form.is_valid():
 			form.save()
+			if is_async_form_request(request):
+				return JsonResponse(
+					{
+						'ok': True,
+						'message': 'Tu informacion ya quedo registrada. El siguiente paso es revisar tu necesidad y preparar el contacto desde Gamora Systems.',
+					}
+				)
 			return redirect(f"{reverse('landing:home')}?submitted=1#contact")
+		if is_async_form_request(request):
+			return JsonResponse(
+				{
+					'ok': False,
+					'errors': serialize_form_errors(form),
+				},
+				status=400,
+			)
 	else:
 		form = LeadForm()
 
@@ -740,6 +959,51 @@ def service_detail(request, slug):
 	return render(request, 'landing/service_detail.html', context)
 
 
+def about(request):
+	context = {
+		**build_base_context(request),
+		'seo': build_about_seo(request),
+		'founders': FOUNDERS,
+		'about_story': ABOUT_STORY,
+		'roi_signals': ROI_SIGNALS,
+		'roi_steps': ROI_STEPS,
+		'roi_example': ROI_EXAMPLE,
+		'client_logos': CLIENT_LOGOS,
+		'services': get_services(),
+		'testimonials': TESTIMONIALS,
+	}
+	return render(request, 'landing/about.html', context)
+
+
+def privacidad(request):
+	context = {
+		**build_base_context(request),
+		'seo': build_privacidad_seo(request),
+	}
+	return render(request, 'landing/privacidad.html', context)
+
+
+def blog(request):
+	context = {
+		**build_base_context(request),
+		'seo': build_blog_seo(request),
+		'blog_posts': get_blog_posts(),
+	}
+	return render(request, 'landing/blog.html', context)
+
+
+def blog_detail(request, slug):
+	post = get_blog_post_or_404(slug)
+	related_posts = [item for item in get_blog_posts() if item['slug'] != slug][:3]
+	context = {
+		**build_base_context(request),
+		'seo': build_blog_post_seo(request, post),
+		'post': post,
+		'related_posts': related_posts,
+	}
+	return render(request, 'landing/blog_detail.html', context)
+
+
 def robots_txt(request):
 	sitemap_url = build_absolute_url(request, reverse('landing:sitemap_xml'))
 	body = f"User-agent: *\nAllow: /\n\nSitemap: {sitemap_url}\n"
@@ -754,6 +1018,21 @@ def sitemap_xml(request):
 			'weekly',
 			'1.0',
 		),
+		(
+			build_absolute_url(request, reverse('landing:about')),
+			'monthly',
+			'0.9',
+		),
+		(
+			build_absolute_url(request, reverse('landing:privacidad')),
+			'yearly',
+			'0.5',
+		),
+		(
+			build_absolute_url(request, reverse('landing:blog')),
+			'weekly',
+			'0.9',
+		),
 	]
 	for service in SERVICES:
 		entries.append(
@@ -764,6 +1043,17 @@ def sitemap_xml(request):
 				),
 				'weekly',
 				'0.8',
+			)
+		)
+	for post in BLOG_POSTS:
+		entries.append(
+			(
+				build_absolute_url(
+					request,
+					reverse('landing:blog_detail', kwargs={'slug': post['slug']}),
+				),
+				'monthly',
+				'0.7',
 			)
 		)
 

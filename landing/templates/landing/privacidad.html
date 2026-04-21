@@ -1,0 +1,95 @@
+{% extends 'landing/base.html' %}
+
+{% block body_class %}detail-page{% endblock %}
+
+{% block content %}
+    <section class="section page-hero">
+        <div class="page-hero__copy reveal">
+            <p class="section-kicker">Privacidad</p>
+            <h1>POLÍTICA DE TRATAMIENTO DE DATOS PERSONALES — Gamora Systems — 2026</h1>
+            <p>Documento aplicable al tratamiento de datos personales de Gamora Systems conforme a la normativa colombiana vigente.</p>
+
+            <div class="hero__actions">
+                <a class="button button--primary" href="{% url 'landing:home' %}">Volver al inicio</a>
+            </div>
+        </div>
+
+        <aside class="page-hero__panel reveal">
+            <p class="hero-panel__kicker">Responsable</p>
+            <h2>Juan Sebastián Clavijo Tapias</h2>
+            <div class="page-hero__stats">
+                <div>
+                    <strong>Gamora Systems</strong>
+                    <span>gamorasystems.dev</span>
+                </div>
+                <div>
+                    <strong>contacto@gamorasystems.com</strong>
+                    <span>Medellín, Colombia</span>
+                </div>
+                <div>
+                    <strong>Vigencia</strong>
+                    <span>Desde el 1 de enero de 2026</span>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="section post-layout">
+        <article class="post-section reveal">
+            <h2>1. Identificación del Responsable</h2>
+            <ul class="insight-list">
+                <li>Nombre: Juan Sebastián Clavijo Tapias</li>
+                <li>Nombre Comercial: Gamora Systems</li>
+                <li>Sitio Web: gamorasystems.dev</li>
+                <li>Correo: contacto@gamorasystems.com</li>
+                <li>Ciudad: Medellín, Colombia</li>
+            </ul>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>2. Marco Legal</h2>
+            <ul class="insight-list">
+                <li>Ley 1581 de 2012</li>
+                <li>Decreto 1377 de 2013</li>
+                <li>Decreto 1074 de 2015</li>
+                <li>Circular Externa 002 de 2015 de la SIC</li>
+            </ul>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>3. Datos Recolectados</h2>
+            <p>Nombre, empresa, correo, teléfono/WhatsApp y descripción de necesidad (vía formulario de contacto).</p>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>4. Finalidad</h2>
+            <p>Contacto comercial, envío de cotizaciones y respuesta a dudas.</p>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>5. Derechos del Titular</h2>
+            <p>El usuario puede Conocer, Actualizar, Rectificar, Suprimir sus datos o Revocar la autorización escribiendo a: contacto@gamorasystems.com</p>
+            <p>Respuesta: 10 días hábiles (consultas) / 15 días hábiles (reclamos).</p>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>6. Autorización</h2>
+            <p>Al enviar el formulario el titular autoriza el tratamiento de sus datos.</p>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>7. Seguridad</h2>
+            <p>Se implementan medidas técnicas y administrativas para proteger los datos.</p>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>8. Transferencia</h2>
+            <p>No se venden ni transfieren datos a terceros sin autorización.</p>
+        </article>
+
+        <article class="post-section reveal">
+            <h2>9. Vigencia</h2>
+            <p>Rige desde el 1 de enero de 2026, vigencia indefinida.</p>
+        </article>
+    </section>
+{% endblock %}

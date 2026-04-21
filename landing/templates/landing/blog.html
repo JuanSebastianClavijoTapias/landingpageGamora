@@ -1,0 +1,69 @@
+{% extends 'landing/base.html' %}
+
+{% block body_class %}detail-page{% endblock %}
+
+{% block content %}
+    <section class="section page-hero">
+        <div class="page-hero__copy reveal">
+            <p class="section-kicker">Blog</p>
+            <h1>Casos de exito y articulos tecnicos para entender como trabajamos.</h1>
+            <p>Documentamos implementaciones, decisiones de stack y aprendizajes de conversion, automatizacion y software para que el proceso sea visible antes de venderlo.</p>
+
+            <div class="hero__actions">
+                <a class="button button--primary" href="#articulos">Ver articulos</a>
+                <a class="button button--secondary" href="{{ contact_href }}">Solicitar diagnostico</a>
+            </div>
+        </div>
+
+        <aside class="page-hero__panel reveal">
+            <p class="hero-panel__kicker">Que encuentras aqui</p>
+            <h2>Contenido accionable para ventas, operaciones y tecnologia.</h2>
+            <div class="page-hero__stats">
+                <div>
+                    <strong>{{ blog_posts|length }}</strong>
+                    <span>entradas iniciales</span>
+                </div>
+                <div>
+                    <strong>Casos + tech</strong>
+                    <span>mezcla de negocio y ejecucion</span>
+                </div>
+                <div>
+                    <strong>Stack real</strong>
+                    <span>n8n, Python, React y mas</span>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="section" id="articulos">
+        <div class="section-heading reveal">
+            <p class="section-kicker">Listado</p>
+            <h2>Entradas publicadas</h2>
+            <p>El blog mezcla casos de clientes y piezas tecnicas para mostrar que la metodologia de Gamora se puede explicar con negocio y con implementacion.</p>
+        </div>
+
+        <div class="blog-grid">
+            {% for post in blog_posts %}
+                <article class="post-card reveal">
+                    <div class="post-card__meta">
+                        <span class="post-pill">{{ post.category }}</span>
+                        <span>{{ post.reading_time }}</span>
+                        <span>{{ post.published_label }}</span>
+                    </div>
+                    <h2>{{ post.title }}</h2>
+                    <p>{{ post.excerpt }}</p>
+                    <div class="post-card__metric">
+                        <strong>{{ post.metric_value }}</strong>
+                        <span>{{ post.metric_label }}</span>
+                    </div>
+                    <div class="stack-list">
+                        {% for tag in post.tags %}
+                            <span class="stack-chip">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <a class="button button--secondary" href="{{ post.url }}">Leer articulo</a>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'landing/base.html' %}
+
+{% block body_class %}detail-page{% endblock %}
+
+{% block content %}
+    <section class="section post-hero">
+        <div class="post-hero__copy reveal">
+            <a class="breadcrumb" href="{% url 'landing:blog' %}">Volver al blog</a>
+            <div class="post-card__meta">
+                <span class="post-pill">{{ post.category }}</span>
+                <span>{{ post.reading_time }}</span>
+                <span>{{ post.published_label }}</span>
+            </div>
+            <h1>{{ post.title }}</h1>
+            <p class="service-hero__lead">{{ post.excerpt }}</p>
+        </div>
+
+        <aside class="page-hero__panel reveal">
+            <p class="hero-panel__kicker">Dato principal</p>
+            <h2>{{ post.metric_value }}</h2>
+            <p>{{ post.metric_label }}</p>
+            <div class="stack-list">
+                {% for tag in post.tags %}
+                    <span class="stack-chip">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </aside>
+    </section>
+
+    <section class="section">
+        <div class="result-grid">
+            {% for result in post.results %}
+                <article class="result-card reveal">
+                    <span>{{ result.label }}</span>
+                    <strong>{{ result.value }}</strong>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section post-layout">
+        {% for section in post.sections %}
+            <article class="post-section reveal">
+                <h2>{{ section.title }}</h2>
+                {% for paragraph in section.paragraphs %}
+                    <p>{{ paragraph }}</p>
+                {% endfor %}
+                {% if section.bullets %}
+                    <ul class="insight-list">
+                        {% for bullet in section.bullets %}
+                            <li>{{ bullet }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </section>
+
+    <section class="section service-more">
+        <div class="section-heading reveal">
+            <p class="section-kicker">Sigue leyendo</p>
+            <h2>Otros articulos del blog</h2>
+        </div>
+
+        <div class="more-services">
+            {% for item in related_posts %}
+                <a class="more-services__item reveal" href="{{ item.url }}">
+                    <span>{{ item.category }}</span>
+                    <strong>{{ item.title }}</strong>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

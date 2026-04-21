@@ -1,0 +1,176 @@
+{% extends 'landing/base.html' %}
+
+{% block body_class %}detail-page{% endblock %}
+
+{% block content %}
+    <section class="section page-hero">
+        <div class="page-hero__copy reveal">
+            <p class="section-kicker">Sobre nosotros</p>
+            <h1>Construimos sistemas para que una empresa pequena opere con mentalidad de grande.</h1>
+            <p>Gamora Systems combina software, automatizacion e inteligencia artificial para resolver cuellos de botella reales con entregas rapidas, stack claro y acompanamiento continuo.</p>
+
+            <div class="hero__actions">
+                <a class="button button--primary" href="{{ contact_href }}">Quiero una propuesta</a>
+                <a class="button button--secondary" href="#equipo">Ver equipo fundador</a>
+            </div>
+        </div>
+
+        <aside class="page-hero__panel reveal">
+            <p class="hero-panel__kicker">Nuestra tesis</p>
+            <h2>El valor aparece cuando la tecnologia ataca un problema visible en dias, no en meses.</h2>
+            <div class="page-hero__stats">
+                <div>
+                    <strong>2 a 5 dias</strong>
+                    <span>para quick wins de alto impacto</span>
+                </div>
+                <div>
+                    <strong>1 solo partner</strong>
+                    <span>para software, automatizacion y soporte</span>
+                </div>
+                <div>
+                    <strong>&lt; 60 dias</strong>
+                    <span>como meta de payback en proyectos priorizados</span>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="section" id="historia">
+        <div class="section-heading reveal">
+            <p class="section-kicker">Historia</p>
+            <h2>Por que existe Gamora</h2>
+            <p>La empresa se construyo alrededor de una idea simple: las PYMES necesitan tecnologia seria, pero con tiempos y costos que se ajusten a la realidad del negocio.</p>
+        </div>
+
+        <div class="story-timeline">
+            {% for item in about_story %}
+                <article class="timeline-card reveal">
+                    <span>{{ item.eyebrow }}</span>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.description }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section" id="equipo">
+        <div class="section-heading reveal">
+            <p class="section-kicker">Equipo fundador</p>
+            <h2>Bios pensadas para explicar liderazgo, experiencia y foco operativo</h2>
+            <p>Los perfiles del equipo fundador estan estructurados para que puedas reemplazar rapido nombre, foto y LinkedIn manteniendo la narrativa de valor.</p>
+        </div>
+
+        <div class="founder-grid">
+            {% for founder in founders %}
+                <article class="founder-card reveal">
+                    <span class="founder-avatar">{{ founder.initials }}</span>
+                    <p class="section-kicker section-kicker--muted">{{ founder.role }}</p>
+                    <h3>{{ founder.name }}</h3>
+                    <p>{{ founder.bio }}</p>
+                    <ul class="founder-card__details">
+                        {% for detail in founder.highlights %}
+                            <li>{{ detail }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a class="founder-card__link" href="{{ founder.linkedin }}" target="_blank" rel="noopener noreferrer">Ver LinkedIn</a>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section" id="metodologia">
+        <div class="section-heading reveal">
+            <p class="section-kicker">Metodologia ROI</p>
+            <h2>Como explicamos el retorno en menos de 60 dias con datos</h2>
+            <p>No prometemos retorno por intuicion. Lo aterrizamos con una linea base, una prioridad clara, medicion desde la salida a produccion y una ventana de recorte entre 30 y 60 dias.</p>
+        </div>
+
+        <div class="roi-grid">
+            {% for signal in roi_signals %}
+                <article class="roi-card reveal">
+                    <strong>{{ signal.value }}</strong>
+                    <span>{{ signal.label }}</span>
+                    <p>{{ signal.description }}</p>
+                </article>
+            {% endfor %}
+        </div>
+
+        <div class="formula-card reveal">
+            <p class="section-kicker section-kicker--muted">Formula base</p>
+            <h3>{{ roi_example.formula }}</h3>
+            <p>{{ roi_example.description }}</p>
+        </div>
+
+        <div class="story-timeline story-timeline--compact">
+            {% for step in roi_steps %}
+                <article class="timeline-card reveal">
+                    <h3>{{ step.title }}</h3>
+                    <p>{{ step.text }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-heading reveal">
+            <p class="section-kicker">Stack por servicio</p>
+            <h2>La tecnologia cambia segun el problema, no por moda</h2>
+            <p>Este mapa resume el stack principal que usamos en cada linea de servicio para mantener velocidad, mantenimiento y posibilidad real de escalar.</p>
+        </div>
+
+        <div class="stack-matrix">
+            {% for service in services %}
+                <article class="stack-card reveal">
+                    <div class="service-card__icon">{{ service.icon|safe }}</div>
+                    <h3>{{ service.title }}</h3>
+                    <p>{{ service.stack_summary }}</p>
+                    <div class="stack-list">
+                        {% for item in service.stack %}
+                            <span class="stack-chip">{{ item }}</span>
+                        {% endfor %}
+                    </div>
+                    <a class="founder-card__link" href="{{ service.url }}">Ver servicio</a>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-heading reveal">
+            <p class="section-kicker">Clientes que ya confiaron</p>
+            <h2>Marcas y testimonios que respaldan la propuesta</h2>
+            <p>Mientras llegan logos oficiales en archivo, dejamos una franja de wordmarks lista para sustituirlos sin rehacer la estructura de la pagina.</p>
+        </div>
+
+        <div class="client-logos">
+            {% for logo in client_logos %}
+                <article class="client-logo reveal">
+                    <span>{{ logo.mark }}</span>
+                    <strong>{{ logo.name }}</strong>
+                    <small>{{ logo.sector }}</small>
+                </article>
+            {% endfor %}
+        </div>
+
+        <div class="testimonials-grid">
+            {% for t in testimonials %}
+                <article class="testimonial-card reveal">
+                    <span class="testimonial-card__quote" aria-hidden="true">&ldquo;</span>
+                    <div class="testimonial-card__top">
+                        <span class="testimonial-card__badge">Cliente verificado</span>
+                        <p class="testimonial-card__stars" aria-label="5 estrellas">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                    </div>
+                    <p class="testimonial-card__text">{{ t.text }}</p>
+                    <div class="testimonial-card__author">
+                        <span class="testimonial-card__avatar">{{ t.initials }}</span>
+                        <div class="testimonial-card__meta">
+                            <strong>{{ t.name }}</strong>
+                            <span>{{ t.role }}</span>
+                            <small>{{ t.company }}</small>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

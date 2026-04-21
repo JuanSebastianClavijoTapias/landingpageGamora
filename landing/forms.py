@@ -6,6 +6,14 @@ from .models import Lead
 
 
 class LeadForm(forms.ModelForm):
+    accept_privacy = forms.BooleanField(
+        required=True,
+        widget=forms.CheckboxInput(attrs={'class': 'consent-check__input'}),
+        error_messages={
+            'required': 'Debes aceptar la Política de Tratamiento de Datos.',
+        },
+    )
+
     class Meta:
         model = Lead
         fields = ['name', 'company', 'email', 'phone', 'need']

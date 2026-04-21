@@ -1,120 +1,12 @@
+{% extends 'landing/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ seo.title }}</title>
-    <meta name="description" content="{{ seo.description }}">
-    <meta name="author" content="{{ company.name }}">
-    <meta name="robots" content="{{ seo.robots }}">
-    <meta name="theme-color" content="#12172D">
-    <link rel="canonical" href="{{ seo.canonical_url }}">
-    <link rel="alternate" hreflang="es-CO" href="{{ seo.canonical_url }}">
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="{{ seo.sitemap_url }}">
-    <meta property="og:title" content="{{ seo.title }}">
-    <meta property="og:description" content="{{ seo.description }}">
-    <meta property="og:type" content="{{ seo.og_type }}">
-    <meta property="og:url" content="{{ seo.og_url }}">
-    <meta property="og:site_name" content="{{ company.name }}">
-    <meta property="og:locale" content="es_CO">
-    <meta property="og:image" content="{{ seo.og_image_url }}">
-    <meta property="og:image:alt" content="{{ seo.og_image_alt }}">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ seo.title }}">
-    <meta name="twitter:description" content="{{ seo.description }}">
-    <meta name="twitter:image" content="{{ seo.og_image_url }}">
-    <script>
-        (function () {
-            const root = document.documentElement;
-            root.classList.add('js-ready');
 
-            try {
-                const lowMemory = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
-                const lowCpu = typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 4;
-                const saveData = Boolean(navigator.connection && navigator.connection.saveData);
-                const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-
-                if (saveData || (coarsePointer && (lowMemory || lowCpu))) {
-                    root.classList.add('low-end-device');
-                    window.__lowEndDevice = true;
-                    return;
-                }
-            } catch (error) {
-                // Ignore capability detection failures and continue with the default experience.
-            }
-
-            window.__lowEndDevice = false;
-        })();
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oxanium:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'landing/css/site.css' %}?v=20260411f">
-    <script type="application/ld+json">{{ seo.schema_json|safe }}</script>
-</head>
-<body>
-    <div class="page-loader" id="page-loader" aria-hidden="true">
-        <div class="page-loader__mark">
-            <img src="{% static 'landing/images/logo_gamora_fondo_eliminado.png' %}" alt="" loading="eager">
-            <span>Gamora Systems</span>
-        </div>
-    </div>
-
-    <div class="cursor cursor--outer" aria-hidden="true"></div>
-    <div class="cursor cursor--inner" aria-hidden="true"></div>
-
-    <div class="ambient" aria-hidden="true">
-        <span class="ambient__orb ambient__orb--one"></span>
-        <span class="ambient__orb ambient__orb--two"></span>
-        <span class="ambient__grid"></span>
-    </div>
-
-    <header class="topbar">
-        <a class="brand" href="#hero" aria-label="Ir al inicio de Gamora Systems">
-            <img class="brand__mark" src="{% static 'landing/images/logo_gamora_fondo_eliminado.png' %}" alt="Logo de {{ company.name }}" loading="eager">
-            <span class="brand__copy">
-                <strong>{{ company.name }}</strong>
-                <small>{{ company.tagline }}</small>
-            </span>
-        </a>
-
-        <nav class="nav" aria-label="Navegacion principal">
-            {% for item in nav_items %}
-                <a href="#{{ item.id }}">{{ item.label }}</a>
-            {% endfor %}
-        </nav>
-
-        <a class="button button--ghost" href="#contact">Solicitar diagnostico</a>
-        <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </header>
-
-    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
-        <nav class="mobile-nav__links">
-            <div class="mobile-nav__head">
-                <strong>Menu</strong>
-                <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Cerrar menu" type="button">
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-            {% for item in nav_items %}
-                <a href="#{{ item.id }}" class="mobile-nav__link">{{ item.label }}</a>
-            {% endfor %}
-            <a class="button button--primary mobile-nav__cta" href="#contact">Solicitar diagnostico</a>
-        </nav>
-    </div>
-
-    <main>
+{% block content %}
         <!-- Hero -->
         <section class="section hero" id="hero">
             <div class="hero__copy">
                 <p class="hero__eyebrow hero-animate">Software, automatizacion e inteligencia artificial para que tu empresa crezca mas rapido</p>
-                <h1 class="hero-animate">Entrega en dias.<br>Tecnologia clara.<br>Resultados reales.</h1>
+                <h1 class="hero-animate">Software, web e IA.<br>Automatizacion para crecer.<br>Resultados desde el inicio.</h1>
                 <p class="hero__lead hero-animate">{{ company.description }}</p>
 
                 <div class="hero__actions hero-animate">
@@ -162,12 +54,6 @@
                     <p class="hero-panel__kicker">Promesa oficial</p>
                     <h2>Entrega ultra rapida potenciada por inteligencia artificial</h2>
                     <p>Gamora define tiempos concretos para cada solucion y convierte la velocidad en una ventaja real para tu negocio.</p>
-                </article>
-
-                <article class="hero-panel hero-panel--roi hero-animate" data-depth="18">
-                    <p class="hero-panel__kicker">Recuperas lo que inviertes</p>
-                    <strong class="hero-panel__metric">&lt; 60 dias</strong>
-                    <p>Tu inversion en Gamora se paga sola en menos de 60 dias.</p>
                 </article>
             </div>
         </section>
@@ -260,48 +146,55 @@
                 </div>
 
                 <div class="lead-shell reveal">
-                    {% if submitted %}
-                        <div class="form-success" role="status">
-                            <strong>Solicitud recibida.</strong>
-                            <p>Tu informacion ya quedo registrada. El siguiente paso es revisar tu necesidad y preparar el contacto desde Gamora Systems.</p>
-                        </div>
-                    {% endif %}
+                    <div class="form-success" data-form-status role="status" aria-live="polite"{% if not submitted %} hidden{% endif %}>
+                        <strong>Solicitud recibida.</strong>
+                        <p>Tu informacion ya quedo registrada. El siguiente paso es revisar tu necesidad y preparar el contacto desde Gamora Systems.</p>
+                    </div>
 
-                    <form class="lead-form" method="post" novalidate>
+                    <form class="lead-form" method="post" action="{% url 'landing:home' %}" novalidate data-async-form="lead">
                         {% csrf_token %}
-                        {{ form.non_field_errors }}
+                        <div data-field-errors="__all__">{{ form.non_field_errors }}</div>
 
                         <div class="form-grid">
                             <label class="field">
                                 <span>Nombre</span>
                                 {{ form.name }}
-                                {{ form.name.errors }}
+                                <div data-field-errors="name">{{ form.name.errors }}</div>
                             </label>
 
                             <label class="field">
                                 <span>Empresa</span>
                                 {{ form.company }}
-                                {{ form.company.errors }}
+                                <div data-field-errors="company">{{ form.company.errors }}</div>
                             </label>
 
                             <label class="field">
                                 <span>Email</span>
                                 {{ form.email }}
-                                {{ form.email.errors }}
+                                <div data-field-errors="email">{{ form.email.errors }}</div>
                             </label>
 
                             <label class="field">
                                 <span>Telefono</span>
                                 {{ form.phone }}
-                                {{ form.phone.errors }}
+                                <div data-field-errors="phone">{{ form.phone.errors }}</div>
                             </label>
 
                             <label class="field field--full">
                                 <span>Necesidad</span>
                                 {{ form.need }}
-                                {{ form.need.errors }}
+                                <div data-field-errors="need">{{ form.need.errors }}</div>
                             </label>
                         </div>
+
+                        <label class="consent-check">
+                            {{ form.accept_privacy }}
+                            <span class="consent-check__copy">
+                                Acepto la
+                                <a href="/privacidad/" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos</a>
+                            </span>
+                        </label>
+                        <div data-field-errors="accept_privacy">{{ form.accept_privacy.errors }}</div>
 
                         <button class="button button--primary button--full" type="submit">Quiero mi diagnostico tecnologico</button>
                         <p class="lead-form__note">Sede en {{ company.location }}. Atendemos empresas colombianas, latinoamericanas e internacionales.</p>
@@ -309,56 +202,4 @@
                 </div>
             </div>
         </section>
-    </main>
-
-    <footer class="footer">
-        <div class="footer__brand">
-            <img src="{% static 'landing/images/logo_gamora_fondo_eliminado.png' %}" alt="Logo de {{ company.name }}" loading="lazy">
-            <div>
-                <strong>{{ company.name }}</strong>
-                <p>{{ company.statement }}</p>
-            </div>
-        </div>
-
-        <nav class="footer__links" aria-label="Enlaces del pie">
-            {% for item in nav_items %}
-                <a href="#{{ item.id }}">{{ item.label }}</a>
-            {% endfor %}
-        </nav>
-
-        <p class="footer__meta">{{ company.location }} · {{ company.coverage }} · {{ current_year }}</p>
-    </footer>
-
-    <div class="whatsapp-dock">
-        <a
-            class="whatsapp-fab{% if not whatsapp.enabled %} whatsapp-fab--pending{% endif %}"
-            id="whatsapp-fab"
-            href="{% if whatsapp.enabled %}{{ whatsapp.link }}{% else %}#contact{% endif %}"
-            {% if whatsapp.enabled %}target="_blank" rel="noopener noreferrer"{% endif %}
-            aria-label="{% if whatsapp.enabled %}Abrir conversacion por WhatsApp{% else %}Ir al formulario de contacto mientras se activa WhatsApp Business{% endif %}"
-            data-track-url="{% url 'landing:track_whatsapp_click' %}"
-            data-whatsapp-target="{% if whatsapp.enabled %}{{ whatsapp.link }}{% else %}{{ whatsapp.business_url }}{% endif %}"
-            data-whatsapp-enabled="{% if whatsapp.enabled %}1{% else %}0{% endif %}"
-        >
-            <span class="whatsapp-fab__icon" aria-hidden="true">
-                <svg viewBox="0 0 32 32" focusable="false">
-                    <path d="M27.2 15.4c0 6.3-5.1 11.4-11.4 11.4-2 0-4-.5-5.8-1.6L4 27.2l2.1-5.8c-1-1.8-1.5-3.8-1.5-5.9C4.6 9.1 9.7 4 16 4s11.2 5.1 11.2 11.4z"></path>
-                    <path d="M12.5 10.6c-.2-.5-.4-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.3 3.4 1.5 3.6c.2.2 2.5 4 6.2 5.4 3 1.2 3.6 1 4.3.9.7-.1 2.1-.9 2.4-1.8.3-.8.3-1.6.2-1.8-.1-.2-.4-.3-.9-.5s-2.1-1.1-2.4-1.2-.6-.2-.8.2-.9 1.2-1.1 1.4-.4.3-.8.1c-.5-.2-1.9-.7-3.6-2.2-1.4-1.2-2.2-2.7-2.4-3.2-.2-.5 0-.7.2-.9.2-.2.4-.5.6-.7.2-.2.2-.4.3-.6s0-.4-.1-.6-.7-1.8-1-2.4z"></path>
-                </svg>
-            </span>
-            <span class="whatsapp-fab__copy">
-                <strong>WhatsApp</strong>
-                <small>{% if whatsapp.enabled %}Respuesta rapida y contacto directo{% else %}Boton listo, falta conectar el numero Business{% endif %}</small>
-            </span>
-        </a>
-
-        {% if not whatsapp.enabled %}
-            <a class="whatsapp-setup-link" href="{{ whatsapp.business_url }}" target="_blank" rel="noopener noreferrer">
-                Activar WhatsApp Business
-            </a>
-        {% endif %}
-    </div>
-
-    <script defer src="{% static 'landing/js/site.js' %}?v=20260411f"></script>
-</body>
-</html>
+{% endblock %}

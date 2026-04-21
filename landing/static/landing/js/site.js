@@ -306,3 +306,120 @@ if (navToggle && mobileNav) {
         }
     });
 }
+
+const leadForm = document.querySelector('[data-async-form="lead"]');
+
+const createErrorList = (messages) => {
+    if (!Array.isArray(messages) || messages.length === 0) {
+        return null;
+    }
+
+    const list = document.createElement('ul');
+    list.className = 'errorlist';
+
+    messages.forEach((message) => {
+        const item = document.createElement('li');
+        item.textContent = message;
+        list.append(item);
+    });
+
+    return list;
+};
+
+const renderLeadFormErrors = (form, errors = {}) => {
+    form.querySelectorAll('[data-field-errors]').forEach((container) => {
+        const messages = errors[container.dataset.fieldErrors] || [];
+        container.replaceChildren();
+
+        const list = createErrorList(messages);
+        if (list) {
+            container.append(list);
+        }
+    });
+
+    form.querySelectorAll('.field__input, .consent-check__input').forEach((field) => {
+        field.removeAttribute('aria-invalid');
+    });
+
+    Object.keys(errors).forEach((fieldName) => {
+        if (fieldName === '__all__') {
+            return;
+        }
+
+        const field = form.querySelector(`[name="${fieldName}"]`);
+        field?.setAttribute('aria-invalid', 'true');
+    });
+};
+
+if (leadForm && window.fetch && window.FormData) {
+    const statusBox = document.querySelector('[data-form-status]');
+    const submitButton = leadForm.querySelector('button[type="submit"]');
+    const defaultButtonLabel = submitButton?.textContent || '';
+
+    leadForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (!leadForm.checkValidity()) {
+            leadForm.reportValidity();
+            return;
+        }
+
+        renderLeadFormErrors(leadForm, {});
+        if (statusBox) {
+            statusBox.hidden = true;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...';
+            submitButton.setAttribute('aria-busy', 'true');
+        }
+
+        try {
+            const response = await window.fetch(leadForm.action || window.location.pathname, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+                body: new FormData(leadForm),
+                credentials: 'same-origin',
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok || !payload.ok) {
+                renderLeadFormErrors(leadForm, payload.errors || {});
+                return;
+            }
+
+            leadForm.reset();
+            renderLeadFormErrors(leadForm, {});
+
+            if (statusBox) {
+                const title = statusBox.querySelector('strong');
+                const message = statusBox.querySelector('p');
+
+                if (title) {
+                    title.textContent = 'Solicitud recibida.';
+                }
+
+                if (message) {
+                    message.textContent = payload.message || 'Tu informacion ya quedo registrada. El siguiente paso es revisar tu necesidad y preparar el contacto desde Gamora Systems.';
+                }
+
+                statusBox.hidden = false;
+            }
+        } catch (error) {
+            renderLeadFormErrors(leadForm, {
+                __all__: ['No pudimos enviar tu solicitud en este momento. Intenta de nuevo.'],
+            });
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = defaultButtonLabel;
+                submitButton.removeAttribute('aria-busy');
+            }
+        }
+    });
+}
