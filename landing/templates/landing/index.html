@@ -146,12 +146,12 @@
                 </div>
 
                 <div class="lead-shell reveal">
-                    <div class="form-success" data-form-status role="status" aria-live="polite"{% if not submitted %} hidden{% endif %}>
+                    <div class="form-success" id="form-success" data-form-status role="status" aria-live="polite"{% if not submitted %} hidden{% endif %}>
                         <strong>Solicitud recibida.</strong>
                         <p>Tu informacion ya quedo registrada. El siguiente paso es revisar tu necesidad y preparar el contacto desde Gamora Systems.</p>
                     </div>
 
-                    <form class="lead-form" method="post" action="{% url 'landing:home' %}" novalidate data-async-form="lead">
+                    <form class="lead-form" id="lead-form" method="post" action="{% url 'landing:home' %}" novalidate data-async-form="lead">
                         {% csrf_token %}
                         <div data-field-errors="__all__">{{ form.non_field_errors }}</div>
 

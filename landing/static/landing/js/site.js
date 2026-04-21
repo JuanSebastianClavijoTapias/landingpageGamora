@@ -4,6 +4,11 @@ const lowEndDevice = Boolean(window.__lowEndDevice);
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || lowEndDevice;
 const loader = document.getElementById('page-loader');
 
+console.log('✓ Script cargado');
+console.log('Loader encontrado:', !!loader);
+console.log('Reduce motion:', reduceMotion);
+console.log('Low end device:', lowEndDevice);
+
 const loadGSAP = () => {
     if (reduceMotion) {
         return Promise.resolve(null);
@@ -54,8 +59,10 @@ const runHeroIntro = () => {
         );
 };
 
-window.addEventListener('load', () => {
+const initializePageLoader = () => {
+    console.log('✓ initializePageLoader ejecutándose');
     const finishIntro = () => {
+        console.log('✓ Ocultando loader...');
         loader?.classList.add('is-hidden');
         runHeroIntro();
     };
@@ -63,7 +70,28 @@ window.addEventListener('load', () => {
     loadGSAP().finally(() => {
         window.setTimeout(finishIntro, lowEndDevice ? 0 : 180);
     });
-});
+};
+
+// Si la página ya está cargada o se está cargando, ejecutar inmediatamente
+console.log('Document ready state:', document.readyState);
+if (document.readyState === 'loading') {
+    console.log('✓ Esperando evento load...');
+    window.addEventListener('load', initializePageLoader);
+} else {
+    // La página ya está cargada
+    console.log('✓ Página ya cargada, ejecutando initializePageLoader');
+    initializePageLoader();
+}
+
+// Fallback: asegurar que el loader se oculte después de 5 segundos en cualquier caso
+window.setTimeout(() => {
+    console.log('⚠ Fallback check - Loader hidden?', loader?.classList.contains('is-hidden'));
+    if (loader && !loader.classList.contains('is-hidden')) {
+        console.log('✓ Fallback: Ocultando loader');
+        loader.classList.add('is-hidden');
+        runHeroIntro();
+    }
+}, 5000);
 
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', (event) => {
@@ -355,6 +383,17 @@ if (leadForm && window.fetch && window.FormData) {
     const statusBox = document.querySelector('[data-form-status]');
     const submitButton = leadForm.querySelector('button[type="submit"]');
     const defaultButtonLabel = submitButton?.textContent || '';
+
+    leadForm.querySelectorAll('input, textarea').forEach((field) => {
+        field.addEventListener('input', () => {
+            field.removeAttribute('aria-invalid');
+
+            const errorContainer = leadForm.querySelector(`[data-field-errors="${field.name}"]`);
+            if (errorContainer) {
+                errorContainer.replaceChildren();
+            }
+        });
+    });
 
     leadForm.addEventListener('submit', async (event) => {
         event.preventDefault();

@@ -9,7 +9,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 
 from .content import (
 	ABOUT_STORY,
@@ -944,6 +944,33 @@ def home(request):
 		'testimonials': TESTIMONIALS,
 	}
 	return render(request, 'landing/index.html', context)
+
+
+@require_http_methods(["POST"])
+def submit_lead_ajax(request):
+	"""
+	Endpoint AJAX para enviar el formulario de contacto sin recargar la página.
+	Devuelve JSON con el estado del envío.
+	"""
+	form = LeadForm(request.POST)
+	
+	if form.is_valid():
+		form.save()
+		return JsonResponse({
+			'success': True,
+			'message': 'Diagnóstico Enviado'
+		})
+	else:
+		# Devolver errores del formulario
+		errors = {}
+		for field, error_list in form.errors.items():
+			errors[field] = [str(error) for error in error_list]
+		
+		return JsonResponse({
+			'success': False,
+			'message': 'Por favor revisa los datos ingresados',
+			'errors': errors
+		}, status=400)
 
 
 def service_detail(request, slug):
