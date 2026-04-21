@@ -1,7 +1,6 @@
 import json
 import os
 from urllib.parse import quote
-from xml.sax.saxutils import escape
 
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -634,7 +633,7 @@ def build_home_seo(request):
 		'og_image_alt': f"Logo de {COMPANY['name']}",
 		'og_type': 'website',
 		'robots': 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
-		'sitemap_url': build_absolute_url(request, reverse('landing:sitemap_xml')),
+		'sitemap_url': build_absolute_url(request, reverse('sitemap_xml')),
 		'schema_json': build_home_schema(request),
 	}
 
@@ -654,7 +653,7 @@ def build_service_seo(request, service):
 		'og_image_alt': f"{service['title']} - {COMPANY['name']}",
 		'og_type': 'website',
 		'robots': 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
-		'sitemap_url': build_absolute_url(request, reverse('landing:sitemap_xml')),
+		'sitemap_url': build_absolute_url(request, reverse('sitemap_xml')),
 		'schema_json': build_service_schema(request, service),
 	}
 
@@ -671,7 +670,7 @@ def build_standard_seo(request, title, description, path, schema_json, og_type='
 		'og_image_alt': title,
 		'og_type': og_type,
 		'robots': 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
-		'sitemap_url': build_absolute_url(request, reverse('landing:sitemap_xml')),
+		'sitemap_url': build_absolute_url(request, reverse('sitemap_xml')),
 		'schema_json': schema_json,
 	}
 
@@ -1032,76 +1031,8 @@ def blog_detail(request, slug):
 
 
 def robots_txt(request):
-	sitemap_url = build_absolute_url(request, reverse('landing:sitemap_xml'))
-	body = f"User-agent: *\nAllow: /\n\nSitemap: {sitemap_url}\n"
+	body = 'User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: https://gamorasystems.dev/sitemap.xml\n'
 	return HttpResponse(body, content_type='text/plain; charset=utf-8')
-
-
-def sitemap_xml(request):
-	today = timezone.now().date().isoformat()
-	entries = [
-		(
-			build_absolute_url(request, reverse('landing:home')),
-			'weekly',
-			'1.0',
-		),
-		(
-			build_absolute_url(request, reverse('landing:about')),
-			'monthly',
-			'0.9',
-		),
-		(
-			build_absolute_url(request, reverse('landing:privacidad')),
-			'yearly',
-			'0.5',
-		),
-		(
-			build_absolute_url(request, reverse('landing:blog')),
-			'weekly',
-			'0.9',
-		),
-	]
-	for service in SERVICES:
-		entries.append(
-			(
-				build_absolute_url(
-					request,
-					reverse('landing:service_detail', kwargs={'slug': service['slug']}),
-				),
-				'weekly',
-				'0.8',
-			)
-		)
-	for post in BLOG_POSTS:
-		entries.append(
-			(
-				build_absolute_url(
-					request,
-					reverse('landing:blog_detail', kwargs={'slug': post['slug']}),
-				),
-				'monthly',
-				'0.7',
-			)
-		)
-
-	url_nodes = []
-	for location, changefreq, priority in entries:
-		url_nodes.append(
-			'<url>'
-			f'<loc>{escape(location)}</loc>'
-			f'<lastmod>{today}</lastmod>'
-			f'<changefreq>{changefreq}</changefreq>'
-			f'<priority>{priority}</priority>'
-			'</url>'
-		)
-
-	xml = (
-		'<?xml version="1.0" encoding="UTF-8"?>'
-		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-		f"{''.join(url_nodes)}"
-		'</urlset>'
-	)
-	return HttpResponse(xml, content_type='application/xml; charset=utf-8')
 
 
 @csrf_exempt

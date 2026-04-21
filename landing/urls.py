@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import about, blog, blog_detail, home, privacidad, robots_txt, service_detail, sitemap_xml, submit_lead_ajax, track_whatsapp_click
+from .views import about, blog, blog_detail, home, privacidad, service_detail, submit_lead_ajax, track_whatsapp_click
 
 app_name = 'landing'
 
@@ -11,8 +11,6 @@ urlpatterns = [
     path('blog/', blog, name='blog'),
     path('blog/<slug:slug>/', blog_detail, name='blog_detail'),
     path('api/submit-lead/', submit_lead_ajax, name='submit_lead_ajax'),
-    path('robots.txt', robots_txt, name='robots_txt'),
-    path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
     path('soluciones/<slug:slug>/', service_detail, name='service_detail'),
     path('track/whatsapp-click/', track_whatsapp_click, name='track_whatsapp_click'),
 ]

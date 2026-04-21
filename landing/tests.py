@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from .models import InteractionEvent, Lead
@@ -23,7 +23,8 @@ class LandingPageTests(TestCase):
 		self.assertContains(response, reverse('landing:privacidad'))
 		self.assertContains(response, 'name="accept_privacy"')
 		self.assertContains(response, 'Política de Tratamiento de Datos')
-		self.assertContains(response, '"@type": "LocalBusiness"')
+		self.assertContains(response, '4tNYG-fk-V3mVpkNOfRtDIbkI5Kg_rt3eBi5b5G6CPo')
+		self.assertContains(response, '"@type": "Organization"')
 		self.assertTemplateUsed(response, 'landing/index.html')
 
 	def test_service_detail_page_renders(self):
@@ -74,21 +75,33 @@ class LandingPageTests(TestCase):
 		self.assertTemplateUsed(post_response, 'landing/blog_detail.html')
 
 	def test_robots_txt_exposes_sitemap(self):
-		response = self.client.get(reverse('landing:robots_txt'))
+		response = self.client.get(reverse('robots_txt'))
 
 		self.assertEqual(response.status_code, 200)
-		self.assertContains(response, 'User-agent: *')
-		self.assertContains(response, '/sitemap.xml')
+		self.assertEqual(
+			response.content.decode('utf-8'),
+			'User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: https://gamorasystems.dev/sitemap.xml\n',
+		)
 
-	def test_sitemap_xml_lists_core_pages(self):
-		response = self.client.get(reverse('landing:sitemap_xml'))
+	@override_settings(ALLOWED_HOSTS=['testserver'])
+	def test_sitemap_xml_lists_search_console_pages(self):
+		response = self.client.get(reverse('sitemap_xml'))
 
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, '<urlset', html=False)
-		self.assertContains(response, '/sobre-nosotros/', html=False)
 		self.assertContains(response, '/privacidad/', html=False)
-		self.assertContains(response, '/blog/', html=False)
+		self.assertContains(response, 'changefreq>yearly<', html=False)
+		self.assertContains(response, 'priority>1.0<', html=False)
 		self.assertContains(response, '/soluciones/pos/', html=False)
+		self.assertContains(response, '/soluciones/erp/', html=False)
+		self.assertContains(response, '/soluciones/automatizaciones/', html=False)
+		self.assertContains(response, '/soluciones/a-medida/', html=False)
+		self.assertContains(response, '/soluciones/web/', html=False)
+		self.assertContains(response, '/soluciones/apps/', html=False)
+		self.assertContains(response, '/soluciones/iot/', html=False)
+		self.assertContains(response, '/soluciones/consultorias/', html=False)
+		self.assertNotContains(response, '/sobre-nosotros/', html=False)
+		self.assertNotContains(response, '/blog/', html=False)
 
 	def test_valid_lead_submission_creates_record(self):
 		response = self.client.post(
