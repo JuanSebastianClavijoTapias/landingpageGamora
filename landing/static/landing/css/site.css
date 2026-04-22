@@ -1870,6 +1870,7 @@ body.cursor-hover .cursor--outer {
 @media (max-width: 860px) {
     .topbar {
         padding: 0.8rem 1rem;
+        display: flex;
         flex-wrap: wrap;
     }
 
@@ -1879,7 +1880,6 @@ body.cursor-hover .cursor--outer {
 
     .topbar__controls {
         order: 2;
-        margin-left: auto;
     }
 
     .topbar__socials {
@@ -1896,6 +1896,7 @@ body.cursor-hover .cursor--outer {
 
     .nav-toggle {
         display: flex;
+        margin-left: auto;
     }
 
     .hero-stage {
