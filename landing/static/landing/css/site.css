@@ -1870,6 +1870,16 @@ body.cursor-hover .cursor--outer {
 @media (max-width: 860px) {
     .topbar {
         padding: 0.8rem 1rem;
+        flex-wrap: wrap;
+    }
+
+    .brand {
+        order: 1;
+    }
+
+    .topbar__controls {
+        order: 2;
+        margin-left: auto;
     }
 
     .topbar__socials {
@@ -1877,6 +1887,10 @@ body.cursor-hover .cursor--outer {
     }
 
     .nav {
+        display: none;
+    }
+
+    .button--ghost {
         display: none;
     }
 
@@ -2469,15 +2483,15 @@ html.low-end-device .section {
     }
 
     .brand {
-        order: 3;
-        margin-left: auto;
-        justify-content: flex-end;
-        flex-direction: row-reverse;
+        order: 1;
+        margin-left: 0;
+        justify-content: flex-start;
+        flex-direction: row;
         gap: 0.6rem;
     }
 
     .brand__copy {
-        text-align: right;
+        text-align: left;
     }
 
     .nav,
@@ -2488,7 +2502,7 @@ html.low-end-device .section {
 
     .nav-toggle {
         display: flex;
-        order: 1;
+        order: 2;
     }
 
     .mobile-nav {

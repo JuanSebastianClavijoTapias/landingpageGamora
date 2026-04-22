@@ -9,7 +9,7 @@ NAV_ITEMS = [
 SOCIAL_LINKS = [
 	{
 		'label': 'LinkedIn',
-		'url': 'https://www.linkedin.com/company/tu-empresa',
+		'url': 'https://www.linkedin.com/in/gamora-systems-738b783ba/',
 		'icon': """
 			<svg viewBox='0 0 24 24' aria-hidden='true'>
 				<path d='M6.94 8.5H3.56V20h3.38V8.5Z'></path>
@@ -20,7 +20,7 @@ SOCIAL_LINKS = [
 	},
 	{
 		'label': 'Instagram',
-		'url': 'https://www.instagram.com/tu-cuenta',
+		'url': 'https://www.instagram.com/gamorasystems/',
 		'icon': """
 			<svg viewBox='0 0 24 24' aria-hidden='true'>
 				<rect x='3.25' y='3.25' width='17.5' height='17.5' rx='5.25'></rect>
@@ -31,7 +31,7 @@ SOCIAL_LINKS = [
 	},
 	{
 		'label': 'YouTube',
-		'url': 'https://www.youtube.com/@tu-canal',
+		'url': 'https://www.youtube.com/@GamoraSystems',
 		'icon': """
 			<svg viewBox='0 0 24 24' aria-hidden='true'>
 				<path d='M20.45 7.1a2.82 2.82 0 0 0-1.98-1.99C16.72 4.62 12 4.62 12 4.62s-4.72 0-6.47.49A2.82 2.82 0 0 0 3.55 7.1 29.4 29.4 0 0 0 3.06 12a29.4 29.4 0 0 0 .49 4.9 2.82 2.82 0 0 0 1.98 1.99c1.75.49 6.47.49 6.47.49s4.72 0 6.47-.49a2.82 2.82 0 0 0 1.98-1.99 29.4 29.4 0 0 0 .49-4.9 29.4 29.4 0 0 0-.49-4.9Z'></path>
